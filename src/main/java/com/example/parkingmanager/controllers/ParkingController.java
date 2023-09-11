@@ -1,6 +1,10 @@
-package com.example.parkingmanager;
+package com.example.parkingmanager.controllers;
 
+import com.example.parkingmanager.models.Car;
+import com.example.parkingmanager.repositories.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,14 +15,21 @@ public class ParkingController {
     @Autowired
     private CarRepository carRepository;
 
-    @PostMapping("/create")
-    public Car createCar(@RequestBody Car car) {
-        return carRepository.save(car);
-    }
+    private static final int MAX_PARKING_SIZE = 5;
 
     @PostMapping("/add")
-    public Car addCar(@RequestBody Car car) {
-        return carRepository.save(car);
+    public ResponseEntity<Object> addCar(@RequestBody Car car) {
+        System.out.println("Received request to add car: " + car.toString());
+
+        long currentParkingSize = carRepository.count();
+
+        if (currentParkingSize >= MAX_PARKING_SIZE) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Parking is full. Cannot add more cars.");
+        }
+
+        Car savedCar = carRepository.save(car);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCar);
     }
 
     @DeleteMapping("/remove/{id}")

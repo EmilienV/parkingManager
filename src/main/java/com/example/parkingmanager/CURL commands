@@ -1,0 +1,10 @@
+
+curl -X POST -H "Content-Type: application/json" -d '{"licensePlate": "ABC123", "model": "Model X", "brand": "Tesla"}' http://localhost:8080/parking/add
+
+
+
+curl http://localhost:8080/parking/list
+
+
+
+curl -X DELETE http://localhost:8080/parking/remove/{id}
